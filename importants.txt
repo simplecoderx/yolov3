@@ -1,0 +1,31 @@
+# Transfer Learning
+python train.py --data custom_data.yaml --cfg yolov3.yaml --weights yolov3.pt --freeze 10
+
+# Guide
+https://github.com/ultralytics/yolov3/issues/106
+
+# Steps
+1. Download pretrained weights from our Google Drive folder that you want to use to transfer learn, and place them in yolov3/weights/.
+2. Update *.cfg file (optional). Each YOLO layer has 255 outputs: 85 outputs per anchor [4 box coordinates + 1 object confidence + 80 class confidences], times 3 anchors. 
+If you use fewer classes, reduce filters to filters=[4 + 1 + n] * 3, where n is your class count. This modification should be made to the layer preceding each of the 3 YOLO layers. Also modify classes=80 to classes=n in each YOLO layer, where n is your class count.
+3. Train.
+
+#Observations
+1st Phase
+python train.py --img 640 --batch 2 --epochs 100 --data custom_data.yaml --weights yolov3.pt --freeze 10
+exp-exp19
+
+2nd Failed Phase
+python train.py --img 640 --batch 2 --epochs 100 --data custom_data.yaml(not changed) --weights runs\train\exp19\weights\yolov3-sample-c.pt --freeze 10
+exp21-exp22
+
+2nd Successful Phase (1:23 p.m. - )
+python train.py --img 640 --batch 2 --epochs 100 --data custom_data.yaml --weights runs\train\exp19\weights\yolov3-sample-c.pt --freeze 10
+exp23-exp24
+
+3rd Phase
+python train.py --img 640 --batch 2 --epochs 100 --data custom_data.yaml --weights runs\train\exp19\weights\yolov3-sample-c.pt --freeze 24
+exp25
+
+#run detect.py in videos
+python detect.py --weights yolov3-xp-21.pt  --conf 0.25 --source data/images/situation5.mp4
